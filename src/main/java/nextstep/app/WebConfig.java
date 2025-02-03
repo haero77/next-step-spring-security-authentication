@@ -18,5 +18,8 @@ public class WebConfig implements WebMvcConfigurer {
     public void addInterceptors(InterceptorRegistry registry) {
         registry.addInterceptor(new FormLoginInterceptor(memberRepository))
                 .addPathPatterns("/login");
+
+        registry.addInterceptor(new BasicAuthenticationInterceptor(memberRepository))
+                .addPathPatterns("/members");
     }
 }
