@@ -1,18 +1,18 @@
-package nextstep.app;
+package nextstep.security;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import nextstep.app.domain.MemberRepository;
-import nextstep.app.ui.AuthenticationException;
-import nextstep.app.util.Base64Convertor;
+import nextstep.security.util.Base64Convertor;
 import org.springframework.web.servlet.HandlerInterceptor;
+
+import java.util.Optional;
 
 public class BasicAuthenticationInterceptor implements HandlerInterceptor {
 
-    private final MemberRepository memberRepository;
+    private final UserDetailsService userDetailsService;
 
-    public BasicAuthenticationInterceptor(MemberRepository memberRepository) {
-        this.memberRepository = memberRepository;
+    public BasicAuthenticationInterceptor(UserDetailsService userDetailsService) {
+        this.userDetailsService = userDetailsService;
     }
 
     @Override
@@ -29,9 +29,15 @@ public class BasicAuthenticationInterceptor implements HandlerInterceptor {
             String username = usernameAndPassword[0];
             String password = usernameAndPassword[1];
 
-            memberRepository.findByEmail(username)
-                    .filter(it -> it.matchPassword(password))
-                    .orElseThrow(AuthenticationException::new);
+            Optional<UserDetails> userDetailsOpt = userDetailsService.findUserDetailsByUsername(username);
+            if (userDetailsOpt.isEmpty()) {
+                throw new AuthenticationException();
+            }
+
+            UserDetails userDetails = userDetailsOpt.get();
+            if (!userDetails.matchesPassword(password)) {
+                throw new AuthenticationException();
+            }
 
             return true;
         } catch (RuntimeException e) {
