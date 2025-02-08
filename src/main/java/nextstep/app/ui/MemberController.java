@@ -4,7 +4,6 @@ import nextstep.app.domain.Member;
 import nextstep.app.domain.MemberRepository;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
@@ -19,7 +18,7 @@ public class MemberController {
     }
 
     @GetMapping("/members")
-    public ResponseEntity<List<Member>> list(@RequestHeader("Authorization") String authorization) {
+    public ResponseEntity<List<Member>> list() {
         List<Member> members = memberRepository.findAll();
         return ResponseEntity.ok(members);
     }
