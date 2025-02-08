@@ -1,8 +1,8 @@
-package nextstep.app.service;
+package nextstep.app.security;
 
 import nextstep.app.domain.MemberRepository;
-import nextstep.security.UserDetails;
-import nextstep.security.UserDetailsService;
+import nextstep.security.filter.UserDetails;
+import nextstep.security.filter.UserDetailsService;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;

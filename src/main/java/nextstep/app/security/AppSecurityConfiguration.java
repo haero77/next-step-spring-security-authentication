@@ -1,6 +1,6 @@
 package nextstep.app.security;
 
-import nextstep.security.*;
+import nextstep.security.filter.*;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
