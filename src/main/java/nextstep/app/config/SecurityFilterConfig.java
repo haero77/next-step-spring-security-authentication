@@ -1,6 +1,7 @@
 package nextstep.app.config;
 
 import jakarta.servlet.Filter;
+import nextstep.security.BasicAuthenticationFilter;
 import nextstep.security.FormLoginFilter;
 import nextstep.security.UserDetailsService;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
@@ -22,6 +23,16 @@ public class SecurityFilterConfig {
 
         registrationBean.setFilter(new FormLoginFilter(userDetailsService));
         registrationBean.addUrlPatterns("/login");
+
+        return registrationBean;
+    }
+
+    @Bean
+    public FilterRegistrationBean<Filter> basicAuthenticationFilter() {
+        FilterRegistrationBean<Filter> registrationBean = new FilterRegistrationBean<>();
+
+        registrationBean.setFilter(new BasicAuthenticationFilter(userDetailsService));
+        registrationBean.addUrlPatterns("/members");
 
         return registrationBean;
     }
