@@ -24,7 +24,7 @@ public class FormLoginFilter implements Filter {
             ServletRequest servletRequest,
             ServletResponse servletResponse,
             FilterChain filterChain
-    ) throws IOException {
+    ) throws IOException, ServletException {
         HttpServletRequest httpRequest = (HttpServletRequest) servletRequest;
         HttpServletResponse httpResponse = (HttpServletResponse) servletResponse;
 
@@ -46,5 +46,8 @@ public class FormLoginFilter implements Filter {
 
         HttpSession session = httpRequest.getSession();
         session.setAttribute(SPRING_SECURITY_CONTEXT_KEY, userDetails);
+
+        // '/login'는 존재하지 않으므로 filterChain.doFilter()를 호출하지 않는다. 필요시 redirect 처리.
+        // filterChain.doFilter(servletRequest, servletResponse);
     }
 }
