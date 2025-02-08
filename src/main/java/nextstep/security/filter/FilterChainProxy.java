@@ -1,4 +1,4 @@
-package nextstep.security;
+package nextstep.security.filter;
 
 import jakarta.servlet.*;
 import jakarta.servlet.http.HttpServletRequest;

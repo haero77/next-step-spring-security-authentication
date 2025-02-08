@@ -1,7 +1,7 @@
 package nextstep.security.config;
 
 import jakarta.servlet.Filter;
-import nextstep.security.FilterChainProxy;
+import nextstep.security.filter.FilterChainProxy;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;

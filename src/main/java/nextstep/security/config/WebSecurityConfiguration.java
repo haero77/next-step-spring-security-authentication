@@ -1,7 +1,7 @@
 package nextstep.security.config;
 
-import nextstep.security.FilterChainProxy;
-import nextstep.security.SecurityFilterChain;
+import nextstep.security.filter.FilterChainProxy;
+import nextstep.security.filter.SecurityFilterChain;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
