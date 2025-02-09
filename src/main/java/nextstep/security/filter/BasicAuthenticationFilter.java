@@ -8,11 +8,14 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.Optional;
 
 public class BasicAuthenticationFilter implements Filter {
 
     private static final Logger log = LoggerFactory.getLogger(BasicAuthenticationFilter.class);
+
+    private static final List<String> AUTHENTICATION_NEED_PATHS = List.of("/members");
 
     private final UserDetailsService userDetailsService;
 
@@ -27,6 +30,12 @@ public class BasicAuthenticationFilter implements Filter {
             FilterChain filterChain
     ) throws IOException, ServletException {
         HttpServletRequest httpRequest = (HttpServletRequest) servletRequest;
+
+        if (!AUTHENTICATION_NEED_PATHS.contains(httpRequest.getRequestURI())) {
+            filterChain.doFilter(servletRequest, servletResponse);
+            return;
+        }
+
         HttpServletResponse httpResponse = (HttpServletResponse) servletResponse;
 
         try {
