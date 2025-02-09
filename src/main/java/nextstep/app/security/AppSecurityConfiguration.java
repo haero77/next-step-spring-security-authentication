@@ -18,18 +18,8 @@ public class AppSecurityConfiguration {
     @Bean
     public SecurityFilterChain formLoginSecurityFilterChain() {
         return new DefaultSecurityFilterChain(
-                (httpServletRequest) -> httpServletRequest.getRequestURI().equals("/login"),
                 List.of(
-                        new FormLoginFilter(userDetailsService)
-                )
-        );
-    }
-
-    @Bean
-    public SecurityFilterChain basicAuthenticationSecurityFilterChain() {
-        return new DefaultSecurityFilterChain(
-                (httpServletRequest) -> httpServletRequest.getRequestURI().equals("/members"),
-                List.of(
+                        new FormLoginFilter(userDetailsService),
                         new BasicAuthenticationFilter(userDetailsService)
                 )
         );

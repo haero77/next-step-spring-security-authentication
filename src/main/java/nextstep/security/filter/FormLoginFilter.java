@@ -6,12 +6,15 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
 public class FormLoginFilter implements Filter {
 
     private static final String SPRING_SECURITY_CONTEXT_KEY = "SPRING_SECURITY_CONTEXT";
+
+    private static final List<String> AUTHENTICATION_NEED_PATHS = List.of("/login");
 
     private final UserDetailsService userDetailsService;
 
@@ -26,6 +29,12 @@ public class FormLoginFilter implements Filter {
             FilterChain filterChain
     ) throws IOException, ServletException {
         HttpServletRequest httpRequest = (HttpServletRequest) servletRequest;
+
+        if (!AUTHENTICATION_NEED_PATHS.contains(httpRequest.getRequestURI())) {
+            filterChain.doFilter(servletRequest, servletResponse);
+            return;
+        }
+
         HttpServletResponse httpResponse = (HttpServletResponse) servletResponse;
 
         Map<String, String[]> parameterMap = httpRequest.getParameterMap();
