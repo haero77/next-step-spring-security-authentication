@@ -1,0 +1,10 @@
+spring:
+  output:
+    ansi:
+      enabled: ALWAYS
+
+logging:
+  level:
+    root: INFO
+    nextstep.security: DEBUG  # ?? ???? ?? ?? ??
+    org.springframework: INFO
