@@ -19,7 +19,7 @@ public class AppSecurityConfiguration {
     public SecurityFilterChain formLoginSecurityFilterChain() {
         return new DefaultSecurityFilterChain(
                 List.of(
-                        new FormLoginFilter(userDetailsService),
+                        new UsernamePasswordAuthenticationFilter(userDetailsService),
                         new BasicAuthenticationFilter(userDetailsService)
                 )
         );

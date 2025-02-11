@@ -13,7 +13,7 @@ import java.util.List;
 import java.util.Map;
 
 // 인증 정보를 추출하고, AuthenticationManager 에게 비밀번호 맞고 틀리는 것을 검증하는 책임을 위임한다.
-public class FormLoginFilter implements Filter {
+public class UsernamePasswordAuthenticationFilter implements Filter {
 
     private static final String SPRING_SECURITY_CONTEXT_KEY = "SPRING_SECURITY_CONTEXT";
 
@@ -21,7 +21,7 @@ public class FormLoginFilter implements Filter {
 
     private final AuthenticationManager authenticationManager;
 
-    public FormLoginFilter(UserDetailsService userDetailsService1) {
+    public UsernamePasswordAuthenticationFilter(UserDetailsService userDetailsService1) {
         this.authenticationManager = new ProviderManager(
                 List.of(new DaoAuthenticationProvider(userDetailsService1))
         );
