@@ -3,9 +3,9 @@ package nextstep.security.filter;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import jakarta.servlet.http.HttpSession;
 import nextstep.security.AuthenticationException;
 import nextstep.security.authentication.*;
+import nextstep.security.context.SecurityContextHolder;
 import org.springframework.util.StringUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
 
@@ -41,10 +41,11 @@ public class UsernamePasswordAuthenticationFilter extends OncePerRequestFilter {
     ) throws IOException {
         try {
             Authentication authenticated = attemptAuthentication(request);
-            HttpSession session = request.getSession();
-            session.setAttribute(SPRING_SECURITY_CONTEXT_KEY, authenticated);
+            SecurityContextHolder.getContext().setAuthentication(authenticated);
         } catch (AuthenticationException e) {
             response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "username or password is invalid");
+        } finally {
+            SecurityContextHolder.clearContext();
         }
     }
 
