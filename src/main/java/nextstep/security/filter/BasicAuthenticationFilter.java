@@ -6,6 +6,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import nextstep.security.AuthenticationException;
 import nextstep.security.authentication.*;
+import nextstep.security.context.SecurityContextHolder;
 import nextstep.security.util.Base64Convertor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -42,12 +43,13 @@ public class BasicAuthenticationFilter extends OncePerRequestFilter {
     ) throws ServletException, IOException {
         try {
             Authentication authenticated = attemptAuthentication(request);
-            request.setAttribute("userDetails", authenticated); // 이후 필터에서 사용 가능하도록 인증된 사용자 정보를 저장
-
+            SecurityContextHolder.getContext().setAuthentication(authenticated);
             filterChain.doFilter(request, response);
         } catch (AuthenticationException | RuntimeException e) {
             log.debug("Authentication failed", e);
             response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Authentication failed");
+        } finally {
+            SecurityContextHolder.clearContext();
         }
     }
 
