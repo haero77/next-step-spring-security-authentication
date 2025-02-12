@@ -39,24 +39,25 @@ public class UsernamePasswordAuthenticationFilter extends OncePerRequestFilter {
             HttpServletResponse response,
             FilterChain filterChain
     ) throws IOException {
-        // extract username and password
+        try {
+            Authentication authenticated = attemptAuthentication(request);
+            HttpSession session = request.getSession();
+            session.setAttribute(SPRING_SECURITY_CONTEXT_KEY, authenticated);
+        } catch (AuthenticationException e) {
+            response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "username or password is invalid");
+        }
+    }
+
+    private Authentication attemptAuthentication(HttpServletRequest request) throws AuthenticationException {
         Map<String, String[]> parameterMap = request.getParameterMap();
         String username = parameterMap.get("username")[0];
         String password = parameterMap.get("password")[0];
 
         if (!StringUtils.hasText(username) || !StringUtils.hasText(password)) {
-            response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "username or password is empty");
-            return;
+            throw new AuthenticationException("username or password is empty");
         }
 
         Authentication authRequest = UsernamePasswordAuthenticationToken.unAuthenticated(username, password);
-
-        try {
-            Authentication authenticated = this.authenticationManager.authenticate(authRequest);
-            HttpSession session = request.getSession();
-            session.setAttribute(SPRING_SECURITY_CONTEXT_KEY, authenticated);
-        } catch (AuthenticationException e) {
-            response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "username or password is empty");
-        }
+        return this.authenticationManager.authenticate(authRequest);
     }
 }
