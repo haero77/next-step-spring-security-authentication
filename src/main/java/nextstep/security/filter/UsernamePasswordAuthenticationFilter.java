@@ -16,8 +16,6 @@ import java.util.Map;
 // 인증 정보를 추출하고, AuthenticationManager 에게 비밀번호 맞고 틀리는 것을 검증하는 책임을 위임한다.
 public class UsernamePasswordAuthenticationFilter extends OncePerRequestFilter {
 
-    private static final String SPRING_SECURITY_CONTEXT_KEY = "SPRING_SECURITY_CONTEXT";
-
     private static final List<String> AUTHENTICATION_NEED_PATHS = List.of("/login");
 
     private final AuthenticationManager authenticationManager;
@@ -44,8 +42,6 @@ public class UsernamePasswordAuthenticationFilter extends OncePerRequestFilter {
             SecurityContextHolder.getContext().setAuthentication(authenticated);
         } catch (AuthenticationException e) {
             response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "username or password is invalid");
-        } finally {
-            SecurityContextHolder.clearContext();
         }
     }
 
