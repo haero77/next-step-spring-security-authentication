@@ -7,6 +7,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import nextstep.security.AuthenticationException;
 import nextstep.security.authentication.*;
 import nextstep.security.context.SecurityContextHolder;
+import nextstep.security.context.SecurityContextRepository;
 import nextstep.security.util.Base64Convertor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -22,11 +23,13 @@ public class BasicAuthenticationFilter extends OncePerRequestFilter {
     private static final List<String> AUTHENTICATION_NEED_PATHS = List.of("/members");
 
     private final AuthenticationManager authenticationManager;
+    private final SecurityContextRepository securityContextRepository; // 실제로는 RequestAttributeSecurityContextRepository 사용.
 
-    public BasicAuthenticationFilter(UserDetailsService userDetailsService) {
+    public BasicAuthenticationFilter(UserDetailsService userDetailsService, SecurityContextRepository contextRepository) {
         this.authenticationManager = new ProviderManager(
                 List.of(new DaoAuthenticationProvider(userDetailsService))
         );
+        this.securityContextRepository = contextRepository;
     }
 
     @Override
@@ -41,9 +44,19 @@ public class BasicAuthenticationFilter extends OncePerRequestFilter {
             HttpServletResponse response,
             FilterChain filterChain
     ) throws ServletException, IOException {
+        // '/members' 경로에 대한 인증과, 인가를 현재 필터에서 같이 처리하고 있으므로 Authentication에 접근.
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication != null && authentication.isAuthenticated()) {
+            filterChain.doFilter(request, response);
+            return;
+        }
+
         try {
             Authentication authenticated = attemptAuthentication(request);
+
             SecurityContextHolder.getContext().setAuthentication(authenticated);
+            securityContextRepository.saveContext(SecurityContextHolder.getContext(), request, response);
+
             filterChain.doFilter(request, response);
         } catch (AuthenticationException | RuntimeException e) {
             log.debug("Authentication failed", e);

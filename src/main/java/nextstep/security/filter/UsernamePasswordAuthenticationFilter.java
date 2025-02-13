@@ -6,6 +6,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import nextstep.security.AuthenticationException;
 import nextstep.security.authentication.*;
 import nextstep.security.context.SecurityContextHolder;
+import nextstep.security.context.SecurityContextRepository;
 import org.springframework.util.StringUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
 
@@ -19,11 +20,16 @@ public class UsernamePasswordAuthenticationFilter extends OncePerRequestFilter {
     private static final List<String> AUTHENTICATION_NEED_PATHS = List.of("/login");
 
     private final AuthenticationManager authenticationManager;
+    private final SecurityContextRepository securityContextRepository; // 실제로는 RequestAttributeSecurityContextRepository 사용.
 
-    public UsernamePasswordAuthenticationFilter(UserDetailsService userDetailsService1) {
+    public UsernamePasswordAuthenticationFilter(
+            UserDetailsService userDetailsService1,
+            SecurityContextRepository contextRepository
+    ) {
         this.authenticationManager = new ProviderManager(
                 List.of(new DaoAuthenticationProvider(userDetailsService1))
         );
+        this.securityContextRepository = contextRepository;
     }
 
     @Override
@@ -39,7 +45,9 @@ public class UsernamePasswordAuthenticationFilter extends OncePerRequestFilter {
     ) throws IOException {
         try {
             Authentication authenticated = attemptAuthentication(request);
+
             SecurityContextHolder.getContext().setAuthentication(authenticated);
+            securityContextRepository.saveContext(SecurityContextHolder.getContext(), request, response);
         } catch (AuthenticationException e) {
             response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "username or password is invalid");
         }
