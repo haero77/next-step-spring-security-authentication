@@ -1,5 +1,6 @@
 package nextstep.app;
 
+import jakarta.servlet.http.HttpSession;
 import nextstep.app.domain.Member;
 import nextstep.app.domain.MemberRepository;
 import org.junit.jupiter.api.BeforeEach;
@@ -12,6 +13,7 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -44,10 +46,9 @@ class FormLoginTest {
         loginResponse.andExpect(status().isOk());
         loginResponse.andDo(print());
 
-        // 더 이상 세션에 인증 정보를 저장하지 않고 SecurityContextHolder를 사용하므로 아래 코드는 주석 처리
-//         HttpSession session = loginResponse.andReturn().getRequest().getSession();
-//         assertThat(session).isNotNull();
-//         assertThat(session.getAttribute("SPRING_SECURITY_CONTEXT")).isNotNull();
+         HttpSession session = loginResponse.andReturn().getRequest().getSession();
+         assertThat(session).isNotNull();
+         assertThat(session.getAttribute("SPRING_SECURITY_CONTEXT")).isNotNull();
     }
 
     @DisplayName("로그인 실패 - 사용자 없음")
