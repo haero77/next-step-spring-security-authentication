@@ -48,8 +48,6 @@ public class BasicAuthenticationFilter extends OncePerRequestFilter {
         } catch (AuthenticationException | RuntimeException e) {
             log.debug("Authentication failed", e);
             response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Authentication failed");
-        } finally {
-            SecurityContextHolder.clearContext();
         }
     }
 
